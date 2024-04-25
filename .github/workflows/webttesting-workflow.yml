@@ -6,6 +6,11 @@ jobs:
   WEB-Test:
     runs-on: ubuntu-latest
     permissions: write-all
+    strategy:
+        matrix:
+            browser: [chromium, firefox, webkit]    #matriz 
+        fail-fast: false    #caso um dos browser falhar ele nao para o teste
+
     steps:
         - name: Check out repository code
           uses: actions/checkout@v4
@@ -31,13 +36,13 @@ jobs:
         - name: Run RF WEB Test
           run: |
             robot -d ./results -v HEADLESS:true \
-            -v BROWSER:chromium tests
+            -v BROWSER:${{matrix.browser}} tests
 
         - name: Upload Test Results
           if: always()
           uses: actions/upload-artifact@v3
           with:
-            name: results-chromium
+            name: results-${{matrix.browser}}
             path: ./results
             if-no-files-found: ignore
             retention-days: 2
@@ -46,13 +51,13 @@ jobs:
           if: always()
           uses: actions/download-artifact@v1
           with:
-            name: results-chromium
+            name: results-${{matrix.browser}}
 
         - name: Send Reports
           if: always()
           uses: joonvena/robotframework-reporter-action@v2.1
           with:
-            report_path: results-chromium
+            report_path: results-${{matrix.browser}}
             gh_access_token: ${{ secrets.GITHUB_TOKEN }}
 
 
