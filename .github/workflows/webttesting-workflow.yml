@@ -22,7 +22,7 @@ jobs:
         - name: Istall Requirements
           run: |
             python -m pip install --upgrade pip
-            pip isntall -U -r requirementts.txt
+            pip install -U -r requirementts.txt
             sudo npm install @playwright/test
             sudo npx playwright install-deps
             rfbrowser init
